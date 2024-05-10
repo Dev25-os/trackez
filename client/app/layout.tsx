@@ -38,7 +38,7 @@ export default function RootLayout({
             <div className="sidebar md:flex w-64 hidden fixed h-full border-r">
               <Sidebar />
             </div>
-            <div className="main md:pl-64">{children}</div>
+            <div className="main md:pl-64 w-full">{children}</div>
           </div>
         </ThemeProvider>
       </body>

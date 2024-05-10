@@ -12,7 +12,7 @@ const SidebarItem = ({ id, label, icon: Icon, href }: SidebarItemType) => {
       <Link
         href={href}
         className={cn(
-          "flex items-center gap-2 mb-3 hover:bg-slate-50 py-1 px-2 rounded",
+          "flex items-center gap-2 mb-3 hover:bg-slate-50 p-2 rounded",
           pathname === href
             ? "bg-slate-800 text-white dark:bg-white dark:text-slate-800  hover:bg-slate-800"
             : "dark:hover:bg-slate-800/90 "
