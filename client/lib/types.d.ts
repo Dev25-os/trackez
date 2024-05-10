@@ -11,3 +11,13 @@ export type CreateTicketSheetType = {
   openSheet: boolean;
   onChangeSheet: (value: boolean) => void;
 };
+
+export type CategoriesType = {
+  id: Number;
+  categoryName: string;
+};
+
+export type PriorityType = {
+  id: Number;
+  priority: string;
+};
