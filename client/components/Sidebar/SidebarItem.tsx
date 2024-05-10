@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { SidebarItemType } from "@/types";
+import { SidebarItemType } from "@/lib/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";

@@ -6,3 +6,8 @@ export type SidebarItemType = {
   icon: IconType;
   href: string;
 };
+
+export type CreateTicketSheetType = {
+  openSheet: boolean;
+  onChangeSheet: (value: boolean) => void;
+};
