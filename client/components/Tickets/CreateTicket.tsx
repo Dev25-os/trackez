@@ -1,4 +1,6 @@
 "use client";
+
+import { useDropzone } from "react-dropzone";
 import {
   Sheet,
   SheetContent,
@@ -10,11 +12,10 @@ import {
   CategoriesType,
   CreateTicketSheetType,
   PriorityType,
-  PriorityType,
 } from "@/lib/types";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import Image from "next/image";
+import { FaTrash } from "react-icons/fa6";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -87,16 +90,33 @@ const CreateTicket = ({ openSheet, onChangeSheet }: CreateTicketSheetType) => {
       priority: "High",
     },
   ]);
+  const [previewImages, setPreviewImages] = useState<any>([]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     form.reset();
     onChangeSheet(false);
   }
+
+  const onDrop = useCallback((acceptedFiles: any[]) => {
+    // Do something with the files
+    console.log("acceptedFiles", acceptedFiles);
+    if (acceptedFiles?.length) {
+      setPreviewImages((prev: any) => [
+        ...prev,
+        ...acceptedFiles.map((file) =>
+          Object.assign(file, { preview: URL.createObjectURL(file) })
+        ),
+      ]);
+    }
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
   return (
     <div>
       <Sheet open={openSheet} onOpenChange={onChangeSheet}>
         <SheetContent
+          className="min-w-[600px]"
           onInteractOutside={(e) => {
             e.preventDefault();
           }}
@@ -190,6 +210,55 @@ const CreateTicket = ({ openSheet, onChangeSheet }: CreateTicketSheetType) => {
                     </FormItem>
                   )}
                 />
+                {/* drag and drop section for attachment */}
+                <div className="attachment">
+                  <FormLabel>Attachments</FormLabel>
+                  <div
+                    {...getRootProps()}
+                    className="border p-4 border-dotted "
+                  >
+                    <input {...getInputProps()} />
+                    {isDragActive ? (
+                      <p>Drop the files here ...</p>
+                    ) : (
+                      <>
+                        <p className="text-sm text-center cursor-pointer">
+                          Drop your images here , or browse
+                        </p>
+                        <p className="text-xs text-muted-foreground text-center pt-1 cursor-pointer">
+                          Supports JPG,PNG
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  {/* preview images */}
+
+                  {previewImages.length > 0 && (
+                    <>
+                      <p className="text-sm mt-5 mb-2">Preview Images</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {previewImages.map((ele: any) => (
+                          <div key={ele.name} className="relative ">
+                            <Image
+                              src={ele.preview}
+                              alt="image preview"
+                              width={100}
+                              height={100}
+                              className="rounded max-h-20 object-contain"
+                            />
+                            {/* <div className="absolute top-1/2 right-1/2" onClick={(ele) => setPreviewImages(prev => {
+                              let temp = prev.filter(item => ele.name !== item.name)
+                              return temp
+                            })}>
+                              <FaTrash color="red" />
+                            </div> */}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-5">
                   <Button type="submit">Submit</Button>
                   <Button
@@ -197,6 +266,7 @@ const CreateTicket = ({ openSheet, onChangeSheet }: CreateTicketSheetType) => {
                     variant={"outline"}
                     onClick={() => {
                       form.reset();
+                      setPreviewImages([]);
                       onChangeSheet(false);
                     }}
                   >
